@@ -16,7 +16,6 @@ class Router
 
     public function dispatch($requestUri, $requestMethod)
     {
-        echo "URL : " . $requestUri . " Method: " . $requestMethod . "<br>";
         if (isset($this->routes[$requestMethod][$requestUri]))
         {
             $route = $this->routes[$requestMethod][$requestUri];
