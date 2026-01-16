@@ -32,4 +32,16 @@ class User
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$email,$hashedPassword, $username]);
     }
+
+    public function UpdateRewards($userID, $rewards)
+    {
+        $database = $this->db;
+        $sql = "UPDATE users set total_points = total_points + ?
+        WHERE id = ?";
+
+        $stmt = $database->prepare($sql);
+        if ($stmt->execute([$rewards, $userID]))
+            return true;
+        return false;
+    }
 }
