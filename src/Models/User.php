@@ -1,47 +1,59 @@
 <?php
 
 namespace App\Models;
+
 use App\Core\Database;
 use PDO;
-
 
 class User
 {
     private $db;
-    public function __construct() 
+    private $id;
+    private $name;
+    private $email;
+    private $password_hash;
+    private $total_points;
+
+    public function __construct(){$this->db = new Database();}
+
+    public function getId() { return $this->id; }
+    public function getName() { return $this->name; }
+    public function getEmail() { return $this->email; }
+    public function getPasswordHash() { return $this->password_hash; }
+    public function getTotalPoints() { return $this->total_points; }
+    public function setId($id) { $this->id = $id; }
+    public function setName($name) { $this->name = $name; }
+    public function setEmail($email) { $this->email = $email; }
+    public function setPasswordHash($password) { $this->password_hash = $password; }
+    public function setTotalPoints($points) { $this->total_points = $points; }
+
+    public function register($name, $email, $password)
     {
-        $obj_db = new Database();
-        $database = $obj_db->connect();
-        $this->db = $database;
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (name, email, password_hash, total_points) VALUES (?, ?, ?, 0)";
+        $db = $this->db->connect();
+        $stmt = $db->prepare($sql);
+        $result = $stmt->execute([$name, $email, $hash]);
+        if ($result) {
+            $this->id = $db->lastInsertId();
+            return true;}
+        return false;
     }
+
     public function login($email, $password)
     {
-        $database = $this->db;
         $sql = "SELECT * FROM users WHERE email = ?";
-        $stmt = $database->prepare($sql);
+        $stmt = $this->db->connect()->prepare($sql);
         $stmt->execute([$email]);
-        $user = $stmt->fetch();
-        if ($user && password_verify($password, $user['password_hash']))
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password_hash'])) {
+            $this->id = $user['id'];
+            $this->name = $user['name'];
+            $this->email = $user['email'];
+            $this->total_points = $user['total_points'];
             return $user;
-        return 0;
-    }
-    public function register($username, $email, $password)
-    {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (email, password_hash, name) VALUES (?,?,?)";
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$email,$hashedPassword, $username]);
-    }
-
-    public function UpdateRewards($userID, $rewards)
-    {
-        $database = $this->db;
-        $sql = "UPDATE users set total_points = total_points + ?
-        WHERE id = ?";
-
-        $stmt = $database->prepare($sql);
-        if ($stmt->execute([$rewards, $userID]))
-            return true;
+        }
         return false;
     }
 }
