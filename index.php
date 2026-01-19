@@ -3,10 +3,8 @@ session_start();
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/templates');
-$twig = new \Twig\Environment($loader, [
-    'cache' => false,
-]);
+$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/src/templates');
+$twig = new \Twig\Environment($loader, ['cache' => false,]);
 
 use App\Core\Router;
 $router = new Router();
