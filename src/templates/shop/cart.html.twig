@@ -1,0 +1,20 @@
+<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
+    <a href="/Loyalty-Points-System/">Home</a> | 
+    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
+    <a href="/Loyalty-Points-System/cart">My Cart</a> | 
+    <a href="/Loyalty-Points-System/rewards">Rewards</a> | 
+    <a href="/Loyalty-Points-System/history">My History</a> | 
+    <a href="/Loyalty-Points-System/logout" style="color: red;">Logout</a>
+</nav>
+<h1>Your Cart</h1>
+<ul>
+    {% for item in items %}
+    <li>{{ item.name }} - {{ item.qty }} x {{ item.price }}$</li>
+    {% endfor %}
+</ul>
+<p>Total: {{ total }} $</p>
+<p>Points to earn: <strong>{{ points }} points</strong></p>
+<a href="/Loyalty-Points-System/shop">Back to Shop</a>
+{% if total != 0 %}
+    <a href="/Loyalty-Points-System/checkout" style="padding: 10px; background: green; color: white; text-decoration: none;">Confirm Purchase</a>
+{% endif %}
