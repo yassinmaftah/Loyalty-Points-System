@@ -1,0 +1,38 @@
+<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
+    <a href="/Loyalty-Points-System/">Home</a> | 
+    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
+    <a href="/Loyalty-Points-System/cart">My Cart</a> | 
+    <a href="/Loyalty-Points-System/rewards">Rewards</a> | 
+    <a href="/Loyalty-Points-System/history">My History</a> | 
+    <a href="/Loyalty-Points-System/logout" style="color: red;">Logout</a>
+</nav>
+<h1>My Points History</h1>
+<p>Current balance : <strong>{{ user.loyalty_points }} points</strong></p>
+
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #eee;">
+            <th>Date</th>
+            <th>Type</th>
+            <th>Points</th>
+            <th>Description</th>
+            <th>New Sale</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trans in transactions %}
+        <tr>
+            <td>{{ trans.createdat }}</td>
+            <td>
+                <span style="color: red;">Exchange</span>
+            </td>
+            <td>{{ trans.amount }}</td>
+            <td>{{ trans.description }}</td>
+            <td>{{ trans.balance_after }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<a href="/Loyalty-Points-System/shop">Back to the shop</a>
