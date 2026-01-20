@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
+    <a href="/Loyalty-Points-System/">Accueil</a> | 
+    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
+    <a href="/Loyalty-Points-System/rewards">Récompenses</a> | 
+    <a href="/Loyalty-Points-System/history">Mon Historique</a> | 
+    <a href="/Loyalty-Points-System/logout" style="color: red;">Déconnexion</a>
+</nav>
+    <h1>Welcome, {{ user.name }}!</h1>
+    <p>Email: {{ user.email }}</p>
+    <p>Your Points: <strong>{{ user.loyalty_points }}</strong></p>
+    <hr>
+    <a href="/Loyalty-Points-System/logout">Logout</a>
+</body>
+</html>
