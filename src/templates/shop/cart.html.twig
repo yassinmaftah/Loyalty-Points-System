@@ -1,20 +1,128 @@
-<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
-    <a href="/Loyalty-Points-System/">Home</a> | 
-    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
-    <a href="/Loyalty-Points-System/cart">My Cart</a> | 
-    <a href="/Loyalty-Points-System/rewards">Rewards</a> | 
-    <a href="/Loyalty-Points-System/history">My History</a> | 
-    <a href="/Loyalty-Points-System/logout" style="color: red;">Logout</a>
-</nav>
-<h1>Your Cart</h1>
-<ul>
-    {% for item in items %}
-    <li>{{ item.name }} - {{ item.qty }} x {{ item.price }}$</li>
-    {% endfor %}
-</ul>
-<p>Total: {{ total }} $</p>
-<p>Points to earn: <strong>{{ points }} points</strong></p>
-<a href="/Loyalty-Points-System/shop">Back to Shop</a>
-{% if total != 0 %}
-    <a href="/Loyalty-Points-System/checkout" style="padding: 10px; background: green; color: white; text-decoration: none;">Confirm Purchase</a>
-{% endif %}
+{% extends "layout.html.twig" %}
+
+{% block title %}My Cart | LoyaltyPro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-wrapper {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    .cart-container {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    .cart-items-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-info h4 { margin: 0; color: #1e293b; font-size: 1.1rem; }
+    .item-info span { color: #64748b; font-size: 0.9rem; }
+    
+    .summary-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .total-label { font-weight: 600; color: #1e293b; }
+    .total-value { font-size: 1.5rem; font-weight: 800; color: #6366f1; }
+    
+    .points-highlight {
+        background: #ecfdf5;
+        color: #065f46;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+    .checkout-btn {
+        display: block;
+        width: 100%;
+        background: #10b981;
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+    }
+    .checkout-btn:hover { background: #059669; transform: translateY(-2px); }
+    .back-btn {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-wrapper">
+    <h1>Shopping Cart</h1>
+    
+    <div class="cart-container">
+        <div class="cart-items-card">
+            {% if items|length > 0 %}
+                {% for item in items %}
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h4>{{ item.name }}</h4>
+                        <span>Price: {{ item.price }}$ | Qty: {{ item.qty }}</span>
+                    </div>
+                    <div class="item-total">
+                        <strong>{{ item.qty * item.price }}$</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #64748b;">Your cart is empty.</p>
+            {% endif %}
+        </div>
+
+        <div class="summary-card">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span class="total-label">Total Amount</span>
+                <span class="total-value">{{ total }}$</span>
+            </div>
+            
+            <div class="points-highlight">
+                <i class="fas fa-gift"></i> You will earn {{ points }} points!
+            </div>
+
+            {% if total != 0 %}
+                <a href="/Loyalty-Points-System/checkout" class="checkout-btn">
+                    Confirm Purchase
+                </a>
+            {% endif %}
+            <a href="/Loyalty-Points-System/shop" class="back-btn">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
