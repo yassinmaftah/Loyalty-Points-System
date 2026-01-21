@@ -9,8 +9,23 @@ class AuthController
     private $twig;
 
     public function __construct($twig){$this->twig = $twig;}
-    public function showSignupForm(){echo $this->twig->render('auth/signup.html.twig');}
-    public function showLoginForm(){echo $this->twig->render('auth/login.html.twig');}
+    public function showSignupForm()
+    {
+        if (isset($_SESSION['user'])) 
+        {
+            header('Location: /Loyalty-Points-System/shop');
+            exit;
+        }
+        echo $this->twig->render('auth/signup.html.twig');
+    }
+    public function showLoginForm()
+    {
+        if (isset($_SESSION['user'])) {
+            header('Location: /Loyalty-Points-System/shop');
+            exit;
+        }
+        echo $this->twig->render('auth/login.html.twig');
+    }
 
     public function signup()
     {
