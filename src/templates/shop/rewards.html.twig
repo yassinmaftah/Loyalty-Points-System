@@ -1,38 +1,119 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Rewards</title>
-</head>
-<body>
-<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
-    <a href="/Loyalty-Points-System/">Home</a> | 
-    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
-    <a href="/Loyalty-Points-System/cart">My Cart</a> | 
-    <a href="/Loyalty-Points-System/rewards">Rewards</a> | 
-    <a href="/Loyalty-Points-System/history">My History</a> | 
-    <a href="/Loyalty-Points-System/logout" style="color: red;">Logout</a>
-</nav>
-    <h1>Redeem my points</h1>
-    <p>Your current balance : <strong>{{ user.loyalty_points }} points</strong></p>
+{% extends "layout.html.twig" %}
 
-    <div style="display: flex; gap: 20px;">
-        {% for reward in rewards %}
-            <div style="border: 1px solid #ccc; padding: 15px;">
-                <h3>{{ reward.name }}</h3>
-                <p>{{ reward.description }}</p>
-                <p>Points required : <strong>{{ reward.points_required }}</strong></p>
-                
-                <form action="/Loyalty-Points-System/shop/redeem" method="POST">
-                    <input type="hidden" name="reward_id" value="{{ reward.id }}">
-                    <button type="submit" {% if user.loyalty_points < reward.points_required %}disabled{% endif %}>
-                        To exchange
-                    </button>
-                </form>
-            </div>
-        {% endfor %}
+{% block title %}Rewards | LoyaltyPro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rewards-wrapper {
+        max-width: 1100px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    .rewards-header {
+        background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        color: white;
+        padding: 3rem;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 3rem;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    }
+    .rewards-header h1 { margin: 0; font-size: 2.2rem; }
+    .balance-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        margin-top: 1rem;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .rewards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    .reward-card {
+        background: white;
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        transition: 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+    .reward-card:hover { transform: translateY(-10px); }
+    
+    .reward-icon {
+        font-size: 2.5rem;
+        color: #f59e0b;
+        margin-bottom: 1rem;
+    }
+    .reward-name { font-size: 1.3rem; font-weight: 800; color: #1e293b; margin: 0.5rem 0; }
+    .reward-desc { color: #64748b; font-size: 0.95rem; line-height: 1.5; flex-grow: 1; }
+    
+    .points-tag {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.6rem;
+        border-radius: 8px;
+        font-weight: 700;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+    .points-tag strong { color: #6366f1; }
+
+    .redeem-btn {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .btn-available { background: #6366f1; color: white; }
+    .btn-available:hover { background: #4f46e5; }
+    .btn-locked { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rewards-wrapper">
+    <div class="rewards-header">
+        <h1>Redeem Your Points</h1>
+        <div class="balance-badge">
+            <i class="fas fa-coins"></i> Your Balance: {{ user.loyalty_points }} pts
+        </div>
     </div>
 
-    <br>
-    <a href="/Loyalty-Points-System/shop">Retour à la boutique</a>
-</body>
-</html>
+    <div class="rewards-grid">
+        {% for reward in rewards %}
+        <div class="reward-card">
+            <div class="reward-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h3 class="reward-name">{{ reward.name }}</h3>
+            <p class="reward-desc">{{ reward.description }}</p>
+            
+            <div class="points-tag">
+                Cost: <strong>{{ reward.points_required }} pts</strong>
+            </div>
+
+            <form action="/Loyalty-Points-System/shop/redeem" method="POST">
+                <input type="hidden" name="reward_id" value="{{ reward.id }}">
+                {% if user.loyalty_points >= reward.points_required %}
+                    <button type="submit" class="redeem-btn btn-available">Exchange Now</button>
+                {% else %}
+                    <button type="button" class="redeem-btn btn-locked" disabled>Not Enough Points</button>
+                {% endif %}
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
