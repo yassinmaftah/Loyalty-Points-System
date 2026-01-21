@@ -83,71 +83,48 @@ class ShopController
         $rewards = $rewardModel->getAll();
         echo $this->twig->render('shop/rewards.html.twig', ['rewards' => $rewards, 'user' => $_SESSION['user']]);
     }
-    // public function redeemPoints()
-    // {
-    //     $rewardId = $_POST['reward_id'];
-    //     $rewardModel = new \App\Models\Reward();
-    //     $reward = $rewardModel->getById($rewardId);
-    //     if (!($_SESSION['user']['loyalty_points'] < $reward['points_required'])) {
-    //         $newBalance = $_SESSION['user']['loyalty_points'] - $reward['points_required'];
 
-    //         $db = (new \App\Core\Database())->connect();
-    //         $sqlUser = "UPDATE users SET total_points = ? WHERE id = ?";
-    //         $stmt = $db->prepare($sqlUser);
-    //         $stmt->execute([$newBalance, $_SESSION['user']['id']]);
+    public function redeemPoints()
+    {
+        $database = new \App\Core\Database();
+        $db = $database->connect();
 
-    //         $sqlTrans = "INSERT INTO points_transactions (user_id, type, amount, description, balance_after) 
-    //                     VALUES (?, 'redeemed', ?, ?, ?)";
-    //         $desc = "Échange : " . $reward['name'];
-    //         $stmt1 = $db->prepare($sqlTrans);
-    //         $stmt1->execute([$_SESSION['user']['id'], $reward['points_required'], $desc, $newBalance]);
-    //         $_SESSION['user']['loyalty_points'] = $newBalance;
-    //         echo "Succès ! Vous avez obtenu " . $reward['name'];
-    //     }
-    //     echo "<br><a href='/Loyalty-Points-System/rewards'>Back to rewards</a>";
-    // }
+        try {
+            $db->beginTransaction();
 
-public function redeemPoints()
-{
-    $database = new \App\Core\Database();
-    $db = $database->connect();
+            $rewardId = $_POST['reward_id'];
+            $rewardModel = new \App\Models\Reward();
+            $reward = $rewardModel->getById($rewardId);
 
-    try {
-        $db->beginTransaction();
+            if ($_SESSION['user']['loyalty_points'] < $reward['points_required']) {
+                throw new Exception("Error: You don't have enough points for this reward.");
+            }
 
-        $rewardId = $_POST['reward_id'];
-        $rewardModel = new \App\Models\Reward();
-        $reward = $rewardModel->getById($rewardId);
+            $newBalance = $_SESSION['user']['loyalty_points'] - $reward['points_required'];
 
-        if ($_SESSION['user']['loyalty_points'] < $reward['points_required']) {
-            throw new Exception("Error: You don't have enough points for this reward.");
+            $sqlUser = "UPDATE users SET total_points = ? WHERE id = ?";
+            $stmt = $db->prepare($sqlUser);
+            $stmt->execute([$newBalance, $_SESSION['user']['id']]);
+
+            $sqlTrans = "INSERT INTO points_transactions (user_id, type, amount, description, balance_after) 
+                        VALUES (?, 'redeemed', ?, ?, ?)";
+            $desc = "Échange : " . $reward['name'];
+            $stmt1 = $db->prepare($sqlTrans);
+            $stmt1->execute([$_SESSION['user']['id'], $reward['points_required'], $desc,$newBalance]);
+
+            $_SESSION['user']['loyalty_points'] = $newBalance;
+
+            $db->commit();
+            
+            echo "Success! You obtained: " . $reward['name'];
+            echo "<br><a href='/Loyalty-Points-System/rewards'>Back to rewards</a>";
+
+        } catch (Exception $e) {
+            if ($db->inTransaction())
+                $db->rollBack();
+            echo "Transaction Failed: " . $e->getMessage();
         }
-
-        $newBalance = $_SESSION['user']['loyalty_points'] - $reward['points_required'];
-
-        $sqlUser = "UPDATE users SET total_points = ? WHERE id = ?";
-        $stmt = $db->prepare($sqlUser);
-        $stmt->execute([$newBalance, $_SESSION['user']['id']]);
-
-        $sqlTrans = "INSERT INTO points_transactions (user_id, type, amount, description, balance_after) 
-                     VALUES (?, 'redeemed', ?, ?, ?)";
-        $desc = "Échange : " . $reward['name'];
-        $stmt1 = $db->prepare($sqlTrans);
-        $stmt1->execute([$_SESSION['user']['id'], $reward['points_required'], $desc,$newBalance]);
-
-        $_SESSION['user']['loyalty_points'] = $newBalance;
-
-        $db->commit();
-        
-        echo "Success! You obtained: " . $reward['name'];
-        echo "<br><a href='/Loyalty-Points-System/rewards'>Back to rewards</a>";
-
-    } catch (Exception $e) {
-        if ($db->inTransaction())
-            $db->rollBack();
-        echo "Transaction Failed: " . $e->getMessage();
     }
-}
     public function history()
     {
         $db = (new \App\Core\Database())->connect();
