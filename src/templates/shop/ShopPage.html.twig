@@ -1,25 +1,207 @@
-<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
-    <a href="/Loyalty-Points-System/">Home</a> | 
-    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
-    <a href="/Loyalty-Points-System/cart">My Cart</a> | 
-    <a href="/Loyalty-Points-System/rewards">Rewards</a> | 
-    <a href="/Loyalty-Points-System/history">My History</a> | 
-    <a href="/Loyalty-Points-System/logout" style="color: red;">Logout</a>
-</nav
-<h1>Shop</h1>
-<p>Welcome, {{ user.name }} (Points: {{ user.loyalty_points }})</p>
-<div style="display: flex; gap: 20px;">
-    {% for product in products %}
-    <div style="border: 1px solid #ccc; padding: 10px;">
-        <h3>{{ product.name }}</h3>
-        <p>{{ product.price }} $</p>
-        <form action="/Loyalty-Points-System/shop/add" method="POST">
-            <input type="hidden" name="id" value="{{ product.id }}">
-            <input type="hidden" name="name" value="{{ product.name }}">
-            <input type="hidden" name="price" value="{{ product.price }}">
-            <input type="number" name="qty" value="1" min="1">
-            <button type="submit">Add to Cart</button>
-        </form>
+{% extends "layout.html.twig" %}
+
+{% block title %}Boutique Pro | LoyaltyPro{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #6366f1;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --bg-card: #ffffff;
+        --bg-icon: #f8fafc;
+    }
+
+    .shop-wrapper {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .page-header h1 { 
+        font-size: 2.2rem; 
+        color: var(--text-main); 
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .product-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 1.8rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Icon Logic Styles */
+    .product-icon {
+        background: var(--bg-icon);
+        height: 180px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        transition: 0.3s;
+        border: 1px solid #f1f5f9;
+    }
+
+    .product-card:hover .product-icon {
+        background: #f0f7ff;
+    }
+
+    /* Colors for specific icons */
+    .fa-mobile-alt { color: #3b82f6; }
+    .fa-headphones { color: #8b5cf6; }
+    .fa-book { color: #10b981; }
+    .fa-laptop { color: #64748b; }
+    .fa-gamepad { color: #ef4444; }
+    .fa-camera { color: #f59e0b; }
+    .fa-mouse { color: #ec4899; }
+    .fa-box { color: #94a3b8; }
+
+    .product-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0.5rem 0;
+    }
+
+    .product-desc {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-top: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .add-form { margin-top: auto; }
+    
+    .form-controls {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    .qty-input {
+        width: 65px;
+        padding: 0.7rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-weight: 700;
+        text-align: center;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    .qty-input:focus { border-color: var(--primary-color); }
+
+    .add-btn {
+        flex: 1;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        transition: 0.3s;
+    }
+
+    .add-btn:hover {
+        background: #4f46e5;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="shop-wrapper">
+    <div class="page-header">
+        <h1>Boutique Online</h1>
+        <div class="user-context">
+            Welcome back, <strong>{{ user.name }}</strong>
+        </div>
     </div>
-    {% endfor %}
+
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-icon">
+                {% if 'Smartphone' in product.name or 'Tablette' in product.name %}
+                    <i class="fas fa-mobile-alt"></i>
+                {% elseif 'Casque' in product.name or 'Ecouteurs' in product.name %}
+                    <i class="fas fa-headphones"></i>
+                {% elseif 'Livre' in product.name or 'PHP' in product.name %}
+                    <i class="fas fa-book"></i>
+                {% elseif 'Laptop' in product.name or 'Bureau' in product.name or 'Ecran' in product.name %}
+                    <i class="fas fa-laptop"></i>
+                {% elseif 'Souris' in product.name or 'Clavier' in product.name %}
+                    <i class="fas fa-mouse"></i>
+                {% elseif 'Console' in product.name or 'Gaming' in product.name %}
+                    <i class="fas fa-gamepad"></i>
+                {% elseif 'Appareil' in product.name or 'Projecteur' in product.name or 'Webcam' in product.name %}
+                    <i class="fas fa-camera"></i>
+                {% else %}
+                    <i class="fas fa-box"></i>
+                {% endif %}
+            </div>
+
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-desc">{{ product.description }}</p>
+            <p class="product-price">{{ product.price }} $</p>
+            
+            <form action="/Loyalty-Points-System/shop/add" method="POST" class="add-form">
+                <input type="hidden" name="id" value="{{ product.id }}">
+                <input type="hidden" name="name" value="{{ product.name }}">
+                <input type="hidden" name="price" value="{{ product.price }}">
+                
+                <div class="form-controls">
+                    <input type="number" name="qty" value="1" min="1" class="qty-input">
+                    <button type="submit" class="add-btn">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+{% endblock %}
