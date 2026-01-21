@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LoyaltyPro{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+        }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        
+        .navbar {
+            background: var(--dark);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .brand { color: var(--white); font-size: 1.4rem; font-weight: 800; text-decoration: none; }
+        .brand span { color: var(--primary); }
+        
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+        .nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        
+        .user-actions { display: flex; align-items: center; gap: 1.2rem; }
+        .points-pill {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cart-icon { color: var(--white); font-size: 1.2rem; position: relative; }
+        .logout-btn { color: #f87171; text-decoration: none; font-size: 0.9rem; border: 1px solid #f87171; padding: 0.3rem 0.8rem; border-radius: 6px; }
+        .logout-btn:hover { background: #f87171; color: white; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/Loyalty-Points-System/" class="brand">LOYALTY<span>PRO</span></a>
+    <ul class="nav-links">
+        <li><a href="/Loyalty-Points-System/">Home</a></li>
+        <li><a href="/Loyalty-Points-System/shop">Shop</a></li>
+        <li><a href="/Loyalty-Points-System/rewards">Rewards</a></li>
+        <li><a href="/Loyalty-Points-System/history">History</a></li>
+    </ul>
+    <div class="user-actions">
+        <a href="/Loyalty-Points-System/cart" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+        <div class="points-pill">
+            <i class="fas fa-star"></i>
+            <span>{{ session.user.loyalty_points }} pts</span>
+        </div>
+        <a href="/Loyalty-Points-System/logout" class="logout-btn">Logout</a>
+    </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>
