@@ -1,0 +1,102 @@
+:root {
+    --primary: #4f46e5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #0f172a;
+    --slate: #64748b;
+    --bg: #f8fafc;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    color: var(--dark);
+}
+
+/* Header & Nav */
+.app-header {
+    background: white;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+.brand span { color: var(--slate); }
+
+.nav-menu { display: flex; list-style: none; gap: 2rem; }
+.nav-link { text-decoration: none; color: var(--slate); font-weight: 600; transition: 0.3s; }
+.nav-link:hover { color: var(--primary); }
+
+/* User Section */
+.user-meta { display: flex; align-items: center; gap: 1.5rem; }
+
+.points-pill {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Tables (History Page) */
+.history-table {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border-collapse: collapse;
+    box-shadow: var(--shadow);
+}
+
+.history-table th { background: #f1f5f9; padding: 1.2rem; text-align: left; color: var(--slate); }
+.history-table td { padding: 1.2rem; border-top: 1px solid #f1f5f9; }
+
+/* Status Badges */
+.status-earned { color: var(--success); font-weight: 800; }
+.status-redeemed { color: var(--danger); font-weight: 800; }
+
+/* Product/Reward Cards */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: 0.3s ease;
+}
+
+.card:hover { transform: translateY(-5px); }
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
