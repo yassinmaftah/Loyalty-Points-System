@@ -5,30 +5,29 @@ namespace App\Core;
 class Router
 {
     protected $routes = [];
-    public function add($method, $uri, $controller, $action) 
+
+    public function add($method, $uri, $controller, $action)
     {
         $this->routes[$method][$uri] = [
             'controller' => $controller,
             'action' => $action
         ];
     }
-    public function getRoutes() {return $this->routes;}
 
-    public function dispatch($requestUri, $requestMethod)
+    public function dispatch($requestUri, $requestMethod, $twig)
     {
-        if (isset($this->routes[$requestMethod][$requestUri]))
+        if (isset($this->routes[$requestMethod][$requestUri])) 
         {
             $route = $this->routes[$requestMethod][$requestUri];
-            $controllerName = $route['controller'];
+            $controllerName = "App\\Controllers\\" . $route['controller'];
             $actionName = $route['action'];
-            $fullControllerName = "App\\Controllers\\" . $controllerName;
-            if (class_exists($fullControllerName))
+            if (class_exists($controllerName)) 
             {
-                $controller = new $fullControllerName();
+                $controller = new $controllerName($twig);
                 $controller->$actionName();
             }
-        }
+        } 
         else
-            echo "Page Not Found";
+            echo "Page not found: " . $requestUri;
     }
 }
