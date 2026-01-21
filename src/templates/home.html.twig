@@ -1,20 +1,106 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
-<nav style="background: #f4f4f4; padding: 10px; margin-bottom: 20px;">
-    <a href="/Loyalty-Points-System/">Accueil</a> | 
-    <a href="/Loyalty-Points-System/shop">Boutique</a> | 
-    <a href="/Loyalty-Points-System/rewards">Récompenses</a> | 
-    <a href="/Loyalty-Points-System/history">Mon Historique</a> | 
-    <a href="/Loyalty-Points-System/logout" style="color: red;">Déconnexion</a>
-</nav>
-    <h1>Welcome, {{ user.name }}!</h1>
-    <p>Email: {{ user.email }}</p>
-    <p>Your Points: <strong>{{ user.loyalty_points }}</strong></p>
-    <hr>
-    <a href="/Loyalty-Points-System/logout">Logout</a>
-</body>
-</html>
+{% extends "layout.html.twig" %}
+
+{% block title %}Dashboard | LoyaltyPro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .home-wrapper {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    .welcome-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+    .profile-icon {
+        width: 80px;
+        height: 80px;
+        background: #6366f1;
+        color: white;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem;
+    }
+    .welcome-card h1 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+    .welcome-card p {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 2.5rem;
+    }
+    .stat-box {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 15px;
+        border: 1px solid #f1f5f9;
+        transition: transform 0.3s ease;
+    }
+    .stat-box:hover { transform: translateY(-5px); }
+    .stat-box i { font-size: 1.5rem; color: #6366f1; margin-bottom: 0.8rem; }
+    .stat-label { display: block; color: #64748b; font-size: 0.9rem; font-weight: 600; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; color: #1e293b; }
+    
+    .quick-actions {
+        margin-top: 2.5rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    .btn {
+        text-decoration: none;
+        padding: 0.8rem 1.8rem;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: 0.3s;
+    }
+    .btn-shop { background: #6366f1; color: white; }
+    .btn-shop:hover { background: #4f46e5; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="home-wrapper">
+    <div class="welcome-card">
+        <div class="profile-icon">
+            <i class="fas fa-user"></i>
+        </div>
+        <h1>Welcome back, {{ user.name }}!</h1>
+        <p>Manage your points and discover exclusive rewards.</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <i class="fas fa-envelope"></i>
+                <span class="stat-label">Email Address</span>
+                <span class="stat-value">{{ user.email }}</span>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-coins"></i>
+                <span class="stat-label">Total Balance</span>
+                <span class="stat-value">{{ user.loyalty_points }} Points</span>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a href="/Loyalty-Points-System/shop" class="btn btn-shop">Go to Shop</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
