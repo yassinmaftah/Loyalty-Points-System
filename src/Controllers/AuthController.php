@@ -6,37 +6,57 @@ use App\Models\User;
 
 class AuthController
 {
-    public function showSignupForm() {include __DIR__ . '/../Views/signup.php';}
-    public function showLoginForm() {include __DIR__ . '/../Views/login.php';}
-    public function home() {include __DIR__ . '/../Views/home.php';}
-    public function signup() 
+    private $twig;
+
+    public function __construct($twig){$this->twig = $twig;}
+    public function showSignupForm(){echo $this->twig->render('auth/signup.html.twig');}
+    public function showLoginForm(){echo $this->twig->render('auth/login.html.twig');}
+
+    public function signup()
     {
-        $username = $_POST['username'];
+        $userModel = new User();
+        $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $userModel = new User();
-        if ($userModel->register($username, $email, $password)) {
+        if ($userModel->register($name, $email, $password)) 
+        {
             header('Location: /Loyalty-Points-System/login');
             exit;
         } else
-            echo "Error: Could not register user.";
+            echo "Error during registration";
     }
 
-    public function login() 
+    public function login()
     {
+        $userModel = new User();
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $userModel = new User();
         $user = $userModel->login($email, $password);
         if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            header('Location: /Loyalty-Points-System/home');
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'loyalty_points' => $user['total_points']
+            ];
+            header('Location: /Loyalty-Points-System/shop');
             exit;
-        } else
-            echo "Wrong email or password!";
+        } else {
+            echo "Wrong email or password";
+        }
     }
-    public function logout() {
+
+    public function home()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: /Loyalty-Points-System/login');
+            exit;
+        }
+        echo $this->twig->render('home.html.twig', ['user' => $_SESSION['user']]);
+    }
+
+    public function logout()
+    {
         session_destroy();
         header('Location: /Loyalty-Points-System/login');
         exit;
