@@ -120,8 +120,7 @@ class ShopController
             echo "<br><a href='/Loyalty-Points-System/rewards'>Back to rewards</a>";
 
         } catch (Exception $e) {
-            if ($db->inTransaction())
-                $db->rollBack();
+            $db->rollBack();
             echo "Transaction Failed: " . $e->getMessage();
         }
     }
